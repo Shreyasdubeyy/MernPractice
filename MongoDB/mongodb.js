@@ -1,7 +1,9 @@
+require("dotenv").config({ path: "../.env" });
+
 const {MongoClient} =require("mongodb")
 
 const dbName="MongoDBModule"
-const url="mongodb+srv://shreyas:shreyas@easycode.02oop2d.mongodb.net/?appName=EasyCode"
+const url=process.env.URL
 const client=new MongoClient(url);
 
  const connectToDB=(async()=>{
@@ -36,5 +38,6 @@ const client=new MongoClient(url);
  })()  
 
  
+
 
 
