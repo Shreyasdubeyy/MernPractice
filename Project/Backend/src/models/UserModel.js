@@ -1,25 +1,58 @@
+const { timeStamp } = require("console")
 const mongoose=require("mongoose")
 const { type } = require("os")
+const validator=require("validator")
 
 //Create a schema
 const userSchema=mongoose.Schema({
     firstName:{
-        type:String
+        type:String,
+        maxLength:10,
+        required:true,
+        trim:true
     },
     lastName:{
-        type:String
+        type:String,
+        maxLength:10,
+        required:true,
+        trim:true
     },
     age:{
-        type:Number
+        type:Number,
+        max:99,
+        required:true
     },
     email:{
-        type:String
+        type:String,
+        unique:true,
+        required:true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Enter a valid email id")
+            }
+        },
+        trim:true
     },
     password:{
-        type:String
-    }
+        type:String,
+        required:true
+    },
+    skills:{
+        type:[String],
+        default:"No skills"
+    },
+    photoUrl:{
+        type:String,
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error("Enter a valid image url")
+            }
+        },trim:true,
+        default:"https://s3.eu-central-1.amazonaws.com/uploads.mangoweb.org/shared-prod/visegradfund.org/uploads/2021/08/placeholder-male.jpg"
+    },
+    
 
-})
+},{timestamps:true})
 
 
 //Create a model (combined structure for a document defines collection)
