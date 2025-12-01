@@ -5,8 +5,14 @@ const User = require("./models/UserModel")
 const checkSignUpCredentials = require("./helper/SignUpCheck")
 const checkLoginCredentials = require("./helper/LoginCheck")
 const bcrypt=require("bcrypt")
+const cookieParser=require("cookie-parser")
 const app=express()
+
+//for handling json req received from req
 app.use(express.json())
+
+//for making cookie readable
+app.use(cookieParser())
 const port=3000
 
 //Middleware Example
@@ -160,6 +166,8 @@ app.post("/login",async(req,res)=>{
     
     checkLoginCredentials(req)
 
+    res.cookie("token","arandontokenstoredascookiename")
+
     const {email,password}=req.body
     const user= await  User.findOne({email:email})
      if(user.length===0){
@@ -182,5 +190,25 @@ app.post("/login",async(req,res)=>{
    
    }
 
+
+})
+
+//profile route
+
+app.get("/profile",async(req,res)=>{
+    try {
+    const cookies=req.cookies
+    const {token}=cookies
+
+    const isValid=token==="arandontokenstoredascookiename"
+    
+    if(!isValid){
+      return  res.send("User not authenticated")
+    }
+
+    res.send("User is authenticated")
+    } catch (error) {
+        res.send("Error:"+error.message)
+    }
 
 })
