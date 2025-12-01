@@ -2,6 +2,9 @@ const connectDB=require("./config/DatabaseConnection")
 const express=require("express")
 const { adminAuthentication } = require("./Middleware/AdminAuth")
 const User = require("./models/UserModel")
+const checkSignUpCredentials = require("./helper/SignUpCheck")
+const checkLoginCredentials = require("./helper/LoginCheck")
+const bcrypt=require("bcrypt")
 const app=express()
 app.use(express.json())
 const port=3000
@@ -42,17 +45,37 @@ const data={
     //Create Route
 app.post("/signUp",async(req,res)=>{
 
-    //create instance
-const user=new User(req.body) 
+   try {
+     checkSignUpCredentials(req)
 
-    //save it to collection
-try {
-    await user.save();
-    res.send(`User ${req.body.firstName+" "+req.body.lastName} inserted successfully`)
-    console.log("User inserted successfully")
-} catch (error) {
-    res.status(401).send("Failed to insert the user:"+error)
-}
+     
+  
+        //Destructure the elements that need to be added
+        const {firstName,lastName,age,email,password,about,skills,photoUrl}=req.body
+        const passwordHash=await bcrypt.hash(password,10)
+
+
+        //create instance
+        const user=new User({
+            firstName:firstName,
+            lastName:lastName,
+            age:age,
+            email:email,
+            password:passwordHash,
+            about:about,
+            skills:skills,
+            photoUrl:photoUrl,
+        }) 
+
+        //save it to collection
+        const success=await user.save()
+        console.log(success)
+        res.send("User created successfully")
+        
+    } catch (error) {
+        res.status(401).send("Error:"+error.message)
+    }
+
 })
 
 
@@ -126,5 +149,38 @@ app.delete("/feed/:name",async(req,res)=>{
      return res.status(500).send("Unable to delete user\n"+error);
     }
     
+
+})
+
+
+//Login
+
+app.post("/login",async(req,res)=>{
+   try {
+    
+    checkLoginCredentials(req)
+
+    const {email,password}=req.body
+    const user= await  User.findOne({email:email})
+     if(user.length===0){
+        res.status(404).send("User not found")
+     }
+
+    const hashPassword=user.password
+    const isValid=await bcrypt.compare(password,hashPassword)
+     if(isValid){
+       return  res.send("Login successfully")
+     }
+     res.send("invalid credentials")
+
+    
+
+
+    
+   } catch (error) {
+    res.status(400).send("Error:"+error.message)
+   
+   }
+
 
 })

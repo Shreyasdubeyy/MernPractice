@@ -37,6 +37,11 @@ const userSchema=mongoose.Schema({
         type:String,
         required:true
     },
+    about:{
+        type:String,
+        maxLength:100,
+        default:"No about section added"
+    },
     skills:{
         type:[String],
         default:"No skills"
