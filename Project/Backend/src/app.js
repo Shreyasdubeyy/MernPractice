@@ -4,6 +4,7 @@ const { adminAuthentication } = require("./Middleware/AdminAuth")
 const User = require("./models/UserModel")
 const checkSignUpCredentials = require("./helper/SignUpCheck")
 const checkLoginCredentials = require("./helper/LoginCheck")
+const jwtAuth=require("./Middleware/JwtAuthetication")
 const bcrypt=require("bcrypt")
 const cookieParser=require("cookie-parser")
 const app=express()
@@ -93,54 +94,54 @@ app.post("/signUp",async(req,res)=>{
 //Read
 //to read json (converting json to java object)
 
-app.get("/feed",async(req,res)=>{
-    try {
-        const data=await User.find({});
-        if(data.length===0){
-           return res.status(401).send("Users Not found")
-        }
+// app.get("/feed",async(req,res)=>{
+//     try {
+//         const data=await User.find({});
+//         if(data.length===0){
+//            return res.status(401).send("Users Not found")
+//         }
         
-        res.send(data)
-        console.log("User count:"+data.length);
+//         res.send(data)
+//         console.log("User count:"+data.length);
     
-    } catch (error) {
-        res.status(400).send("error while fetching the data\n "+error)
-        console.log("Error occured\n",error)
-    }
-})
+//     } catch (error) {
+//         res.status(400).send("error while fetching the data\n "+error)
+//         console.log("Error occured\n",error)
+//     }
+// })
 
 //Update
-app.patch("/feed/:firstName",async(req,res)=>{
-    try {
-        const ALLOWED_UPDATES=["firstName","lastName","age","photoUrl","skills","about","password"]
+// app.patch("/feed/:firstName",async(req,res)=>{
+//     try {
+//         const ALLOWED_UPDATES=["firstName","lastName","age","photoUrl","skills","about","password"]
 
-        const isAllowed=Object.keys(req.body).every((key)=>{
-            if(!ALLOWED_UPDATES.includes(key)){
-                return false
-            }
-            return true
-        })
-        console.log(isAllowed)
-        if(!isAllowed){
-            return res.status(400).send("Cannot update email id")
-        }
-        const updatingParameter=req.body
-        const name=req.body.firstName;
-        const updated=await User.findOneAndUpdate({firstName:name},updatingParameter,{validator:true})
+//         const isAllowed=Object.keys(req.body).every((key)=>{
+//             if(!ALLOWED_UPDATES.includes(key)){
+//                 return false
+//             }
+//             return true
+//         })
+//         console.log(isAllowed)
+//         if(!isAllowed){
+//             return res.status(400).send("Cannot update email id")
+//         }
+//         const updatingParameter=req.body
+//         const name=req.body.firstName;
+//         const updated=await User.findOneAndUpdate({firstName:name},updatingParameter,{validator:true})
 
-        if(updated){
-            console.log("Updated successfully")
-           return res.send("Updated Successfully");
-        }
+//         if(updated){
+//             console.log("Updated successfully")
+//            return res.send("Updated Successfully");
+//         }
         
-        res.send("Unable to find the user")
+//         res.send("Unable to find the user")
         
         
-    } catch (error) {
-        res.status(400).send("Error While Updating \n",error)
-        console.log("Error While Updating \n",error)
-    }
-})
+//     } catch (error) {
+//         res.status(400).send("Error While Updating \n",error)
+//         console.log("Error While Updating \n",error)
+//     }
+// })
 
 
 //Delete
@@ -172,15 +173,15 @@ app.post("/login",async(req,res)=>{
     checkLoginCredentials(req)
     const {email,password}=req.body
 
+    const user= await  User.findOne({email:email})
     //Creating a jwt token
-     const user= await  User.findOne({email:email})
-     const id=user._id
+    
+    //  const id=user._id
 
-
-     const token=jwt.sign({_id:id},"randomsecretkey")
+    //  const token=jwt.sign({_id:id},"randomsecretkey")
     
     //send the cookie back
-     res.cookie("token",token)
+    //  res.cookie("token",token)
 
     
    
@@ -188,17 +189,14 @@ app.post("/login",async(req,res)=>{
         res.status(404).send("User not found")
      }
 
-    const hashPassword=user.password
-    const isValid=await bcrypt.compare(password,hashPassword)
+    const isValid=await user.isPasswordValid(password)
      if(isValid){
+        const token=await user.createJwtToken();
+        res.cookie("token",token)
        return  res.send("Login successfully")
      }
      res.send("invalid credentials")
 
-    
-
-
-    
    } catch (error) {
     res.status(400).send("Error:"+error.message)
    
@@ -209,18 +207,19 @@ app.post("/login",async(req,res)=>{
 
 //profile route
 
-app.get("/profile",async(req,res)=>{
+app.get("/profile",jwtAuth,async(req,res)=>{
     try {
 
-    const cookie=req.cookies
-    const {token}=cookie
+    // const cookie=req.cookies
+    // const {token}=cookie
 
-    const decodedMessage=jwt.verify(token,"randomsecretkey")
-    const user=await User.findById(decodedMessage)
-    if(!user){
-        return res.send("User not exists")
-    }
+    // const decodedMessage=jwt.verify(token,"randomsecretkey")
+    // const user=await User.findById(decodedMessage)
+    // if(!user){
+    //     return res.send("User not exists")
+    // }
 
+    const user=req.user
     res.send("The current user is:"+user.firstName+" "+user.lastName)
     // const cookies=req.cookies
     // const {token}=cookies

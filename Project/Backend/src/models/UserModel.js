@@ -2,6 +2,8 @@ const { timeStamp } = require("console")
 const mongoose=require("mongoose")
 const { type } = require("os")
 const validator=require("validator")
+const jwt=require("jsonwebtoken")
+const bcrypt=require("bcrypt")
 
 //Create a schema
 const userSchema=mongoose.Schema({
@@ -58,6 +60,29 @@ const userSchema=mongoose.Schema({
     
 
 },{timestamps:true})
+
+
+//Schema methods
+userSchema.methods.createJwtToken=function(){
+    const user=this;
+    const token=jwt.sign({_id:user._id},"randomsecretkey",{
+        expiresIn:"1d"
+    })
+return token;
+}
+
+userSchema.methods.isPasswordValid=async function(passwordInput){
+    const user=this
+    const passwordHash=user.password
+
+    const isValid=await bcrypt.compare(passwordInput,passwordHash)
+
+    if(isValid){
+        return isValid
+    }
+    throw new Error("User is not valid")
+
+}
 
 
 //Create a model (combined structure for a document defines collection)
