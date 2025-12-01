@@ -13,6 +13,11 @@ app.use(express.json())
 
 //for making cookie readable
 app.use(cookieParser())
+
+//jwt token
+const jwt=require("jsonwebtoken")
+
+
 const port=3000
 
 //Middleware Example
@@ -165,11 +170,20 @@ app.post("/login",async(req,res)=>{
    try {
     
     checkLoginCredentials(req)
-
-    res.cookie("token","arandontokenstoredascookiename")
-
     const {email,password}=req.body
-    const user= await  User.findOne({email:email})
+
+    //Creating a jwt token
+     const user= await  User.findOne({email:email})
+     const id=user._id
+
+
+     const token=jwt.sign({_id:id},"randomsecretkey")
+    
+    //send the cookie back
+     res.cookie("token",token)
+
+    
+   
      if(user.length===0){
         res.status(404).send("User not found")
      }
@@ -197,16 +211,27 @@ app.post("/login",async(req,res)=>{
 
 app.get("/profile",async(req,res)=>{
     try {
-    const cookies=req.cookies
-    const {token}=cookies
 
-    const isValid=token==="arandontokenstoredascookiename"
-    
-    if(!isValid){
-      return  res.send("User not authenticated")
+    const cookie=req.cookies
+    const {token}=cookie
+
+    const decodedMessage=jwt.verify(token,"randomsecretkey")
+    const user=await User.findById(decodedMessage)
+    if(!user){
+        return res.send("User not exists")
     }
 
-    res.send("User is authenticated")
+    res.send("The current user is:"+user.firstName+" "+user.lastName)
+    // const cookies=req.cookies
+    // const {token}=cookies
+
+    // const isValid=token==="arandontokenstoredascookiename"
+    
+    // if(!isValid){
+    //   return  res.send("User not authenticated")
+    // }
+
+    // res.send("User is authenticated")
     } catch (error) {
         res.send("Error:"+error.message)
     }
