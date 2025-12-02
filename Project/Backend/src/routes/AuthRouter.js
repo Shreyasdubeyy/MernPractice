@@ -1,8 +1,8 @@
 const express=require("express")
 const User=require("../models/UserModel")
-const checkSignUpCredentials = require("../helper/SignUpCheck")
+const {checkSignUpCredentials,checkLoginCredentials,checkEditCredentials}= require("../helper/CheckingInputs")
 const bcrypt=require("bcrypt")
-const checkLoginCredentials = require("../helper/LoginCheck")
+
 
 
 const authRouter=express.Router()
@@ -45,13 +45,13 @@ authRouter.post("/signUp",async(req,res)=>{
 authRouter.post("/login",async(req,res)=>{
    try {
     
-    checkLoginCredentials(req)
+   checkLoginCredentials(req)
     const {email,password}=req.body
 
     const user= await  User.findOne({email:email})
    
-      if(user.length===0){
-        res.status(404).send("User not found")
+      if(!user){
+       return res.status(404).send("User not found")
      }
 
     const isValid=await user.isPasswordValid(password)
@@ -70,6 +70,13 @@ authRouter.post("/login",async(req,res)=>{
 
 })
 
+authRouter.post("/logout",(req,res)=>{
+    res.cookie("token","randomvalue",{
+        expires:new Date(Date.now())
+    })
+
+    res.send("Logged out successfully")
+})
 
 
 
