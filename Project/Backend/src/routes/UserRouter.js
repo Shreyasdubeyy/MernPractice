@@ -4,7 +4,7 @@ const { checkEditCredentials } = require("../helper/CheckingInputs")
 const bcrypt=require("bcrypt")
 const userRoute=express.Router()
 
-userRoute.get("/profile",jwtAuth,async(req,res)=>{
+userRoute.get("/profile/view",jwtAuth,async(req,res)=>{
     try {
 
     const user=req.user
