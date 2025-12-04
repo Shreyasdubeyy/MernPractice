@@ -10,11 +10,10 @@ app.use(express.json())
 app.use(cookieParser())
 
 //jwt token
-const jwt=require("jsonwebtoken")
 const authRouter = require("./routes/AuthRouter")
-const userRoute = require("./routes/UserRouter")
-const connectRoute=require("./routes/ConnectionRouter")
-
+const profileRouter = require("./routes/ProfileRouter")
+const connectRouter=require("./routes/ConnectionRouter")
+const userRouter=require("./routes/UserRouter")
 
 const port=3000
 
@@ -29,8 +28,9 @@ app.listen(port,()=>{
 })()
 
 app.use("/",authRouter) //first middleware will check for this routes
-app.use("/",userRoute) //if no match founds it enters here 
-app.use("/",connectRoute)
+app.use("/",profileRouter) //if no match founds it enters here 
+app.use("/",connectRouter)
+app.use("/",userRouter)
 
 
 

@@ -75,4 +75,56 @@ res.json({
 
 })
 
+
+connectRouter.post("/request/review/:status/:requestId",jwtAuthCheck,async(req,res)=>{
+
+  try {
+    const loggedInUser=req.user;
+
+    const {status}=req.params;
+
+    //status validation
+    const isAllowedStatus=["accepted","rejected"];
+    if(!isAllowedStatus.includes(status)){
+        return res.status(400).json({
+            message:`${status} is invalid`
+        })
+    }
+
+    //requestId Validations
+    const {requestId}=req.params;
+    if(!mongoose.Types.ObjectId.isValid(requestId)){
+        return res.status(400).json({
+            message:`${requestId} is not a valid id`
+        })
+    }
+
+
+
+
+    const connection=await ConnectionRequest.findOne({
+        _id:requestId,
+        ReceiverId:loggedInUser._id,
+        status:"interested",
+    })
+
+    if(!connection){
+        return res.status(404).json({
+            message:"No connection requests found"
+        })
+    }
+    
+    connection.status=status;
+    connection.save()
+
+    res.json({
+        message:`${loggedInUser.firstName} you have sucessfully accepted the connection request`
+    })
+  } catch (error) {
+    res.status(400).send("Errror:"+error.message)
+  }
+
+
+})
+
 module.exports=connectRouter
