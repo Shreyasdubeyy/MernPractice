@@ -1,6 +1,7 @@
 const express=require("express")
 const jwtAuthCheck = require("../Middleware/JwtAuthetication")
 const ConnectionRequest=require("../models/ConnectionModel")
+const User = require("../models/UserModel")
 const userRouter=express.Router()
 
 const USER_DATA_ALLOWED="firstName lastName age about skills"
@@ -49,6 +50,55 @@ userRouter.get("/connections",jwtAuthCheck,async(req,res)=>{
             message:error.message
         })
     }
+})
+
+userRouter.get("/feed",jwtAuthCheck,async(req,res)=>{
+try {
+    
+    //get the user
+//check if user has info in connection request db
+//create a set to keep track of users that doesnt want to be shown
+//run find query with $nin and $nt in $and
+//make use of select()
+
+
+const loggedInUser=req.user;
+
+const requests=await ConnectionRequest.find({
+    $or:[
+        {SenderId:loggedInUser._id},{ReceiverId:loggedInUser._id}
+    ]
+})
+
+const hideUsers=new Set();
+
+requests.forEach((req)=>{
+    hideUsers.add(req.SenderId)
+    hideUsers.add(req.ReceiverId)
+})
+
+const feedUsers=await User.find({
+    $and:[
+        {_id:{
+            $nin:Array.from(hideUsers)
+        }},
+        {
+            _id:{
+                $ne:loggedInUser._id
+            }
+        }
+    ]
+}).select(USER_DATA_ALLOWED)
+
+res.send(feedUsers)
+
+
+} catch (error) {
+    res.status(400).json({
+        message:error.message
+    })
+}
+
 })
 
 
