@@ -55,12 +55,18 @@ userRouter.get("/connections",jwtAuthCheck,async(req,res)=>{
 userRouter.get("/feed",jwtAuthCheck,async(req,res)=>{
 try {
     
-    //get the user
+//get the user
 //check if user has info in connection request db
 //create a set to keep track of users that doesnt want to be shown
 //run find query with $nin and $nt in $and
 //make use of select()
 
+
+//pagination: skip(),limit() skip=(pages-1)*limit
+
+const pages=parseInt(req.query.page || 1)
+const limit=parseInt(req.query.limit || 2)
+const skip=(pages-1)*limit
 
 const loggedInUser=req.user;
 
@@ -88,7 +94,7 @@ const feedUsers=await User.find({
             }
         }
     ]
-}).select(USER_DATA_ALLOWED)
+}).select(USER_DATA_ALLOWED).skip(skip).limit(limit)
 
 res.send(feedUsers)
 
