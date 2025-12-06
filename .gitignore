@@ -2,3 +2,5 @@
 Project/Backend/node_modules
 Project/Backend/package-lock.json
 node_modules
+Project/Frontend/node_modules
+Project/Frontend/package-lock.json
