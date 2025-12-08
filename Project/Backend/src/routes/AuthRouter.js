@@ -51,16 +51,22 @@ authRouter.post("/login",async(req,res)=>{
     const user= await  User.findOne({email:email})
    
       if(!user){
-       return res.status(404).send("User not found")
+        
+       return res.status(404).json({
+        message:"User doesnt exist"
+       })
      }
 
     const isValid=await user.isPasswordValid(password)
      if(isValid){
         const token=await user.createJwtToken();
         res.cookie("token",token)
-       return  res.send("Login successfully")
+       return  res.json({
+        user,
+        message:"Logged in successful"
+       })
      }
-     res.send("invalid credentials")
+      res.send("invalid credentials")
 
    } catch (error) {
     res.status(400).send("Error:"+error.message)

@@ -1,7 +1,14 @@
 const connectDB=require("./config/DatabaseConnection")
 const express=require("express")
 const cookieParser=require("cookie-parser")
+const cors=require("cors")
 const app=express()
+
+//handling cross domain requests
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
+}))
 
 //for handling json req received from req
 app.use(express.json())
@@ -26,6 +33,9 @@ app.listen(port,()=>{
     console.log(`Server running succesfully on http://localhost:${port}`)
 })
 })()
+
+
+
 
 app.use("/",authRouter) //first middleware will check for this routes
 app.use("/",profileRouter) //if no match founds it enters here 

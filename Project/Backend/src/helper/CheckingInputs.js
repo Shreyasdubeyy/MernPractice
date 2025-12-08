@@ -1,7 +1,5 @@
 const validator=require("validator")
 
-
-
 const checkSignUpCredentials=(req)=>{
 
 const {firstName,lastName,email,password,age}=req.body;
