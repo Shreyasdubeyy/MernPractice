@@ -80,7 +80,7 @@ userSchema.methods.isPasswordValid=async function(passwordInput){
     if(isValid){
         return isValid
     }
-    throw new Error("User is not valid")
+    throw new Error("Invalid credentials")
 
 }
 

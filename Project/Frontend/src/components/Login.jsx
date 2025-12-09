@@ -13,6 +13,8 @@ const Login = () => {
 const [email,setEmail]=useState("shreyas@gmail.com");
 const [password,setPassword]=useState("12345");
 
+const[errorMessage,setErrorMessage]=useState("")
+
 const dispatch=useDispatch()
 
 const navigate=useNavigate()
@@ -32,6 +34,7 @@ const handleLogin=async()=>{
 
 
   } catch (error) {
+    setErrorMessage(error?.response?.data)
     console.log(error.message)
   }
 }
@@ -75,9 +78,9 @@ const handleLogin=async()=>{
               </a>
             </label>
           </div>
-
+            <p className='text-red-500'>{errorMessage}</p>
           <div className="form-control mt-5 flex justify-center ">
-           <button className="btn btn-primary w-20 mt-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+           <button className="btn btn-primary w-20 mt-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                    onClick={handleLogin}      
            >
                Login
