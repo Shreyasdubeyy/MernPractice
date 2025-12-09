@@ -1,5 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { BASE_URL } from '../constants'
 const Navbar = () => {
 
 const user=useSelector((store)=>store.user)
@@ -33,7 +35,10 @@ const user=useSelector((store)=>store.user)
           </a>
         </li>
         <li><a>Settings</a></li>
-        <li><a>Logout</a></li>
+        <li>
+          <Link to="/login">Logout</Link>
+        </li>
+
       </ul>
     </div>
 

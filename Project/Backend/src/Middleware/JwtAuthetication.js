@@ -4,7 +4,7 @@ const jwtAuthCheck=async(req,res,next)=>{
 try {
     const {token}=req.cookies
     if(!token){
-        return res.send("Please Login")
+        return res.status(401).send("Please Login")
     }
     const decodedObject=await jwt.verify(token,"randomsecretkey")
     

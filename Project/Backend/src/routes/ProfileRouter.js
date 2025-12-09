@@ -7,11 +7,11 @@ const profileRoute=express.Router()
 profileRoute.get("/profile/view",jwtAuth,async(req,res)=>{
     try {
 
-    const {password,...user}=req.user.toObject()
-    res.send("The current user is:"+user.firstName+" "+user.lastName+"\n"+JSON.stringify(user,null,2))
-   
+    const loggedInUser=req.user
+    // res.send("The current user is:"+user.firstName+" "+user.lastName+"\n"+JSON.stringify(user,null,2))
+    res.json(loggedInUser)
     } catch (error) {
-        res.send("Error:"+error.message)
+        res.status(401).send("Error:"+error.message)
     }
 
 })
