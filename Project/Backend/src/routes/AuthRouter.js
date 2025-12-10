@@ -13,7 +13,7 @@ authRouter.post("/signUp",async(req,res)=>{
      checkSignUpCredentials(req)
 
         //Destructure the elements that need to be added
-        const {firstName,lastName,age,email,password,about,skills,photoUrl}=req.body
+        const {firstName,lastName,age,email,password,about,skills,photoUrl,gender}=req.body
         const passwordHash=await bcrypt.hash(password,10)
 
 
@@ -27,6 +27,7 @@ authRouter.post("/signUp",async(req,res)=>{
             about:about,
             skills:skills,
             photoUrl:photoUrl,
+            gender:gender
         }) 
 
         //save it to collection

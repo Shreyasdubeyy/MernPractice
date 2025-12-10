@@ -4,7 +4,7 @@ const ConnectionRequest=require("../models/ConnectionModel")
 const User = require("../models/UserModel")
 const userRouter=express.Router()
 
-const USER_DATA_ALLOWED="firstName lastName age about skills"
+const USER_DATA_ALLOWED="firstName lastName age about skills photoUrl gender"
 
 userRouter.get("/received/requests",jwtAuthCheck,async(req,res)=>{
 try {
@@ -65,7 +65,7 @@ try {
 //pagination: skip(),limit() skip=(pages-1)*limit
 
 const pages=parseInt(req.query.page || 1)
-const limit=parseInt(req.query.limit || 2)
+const limit=parseInt(req.query.limit || 10)
 const skip=(pages-1)*limit
 
 const loggedInUser=req.user;

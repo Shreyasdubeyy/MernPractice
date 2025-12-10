@@ -57,6 +57,11 @@ const userSchema=mongoose.Schema({
         },trim:true,
         default:"https://s3.eu-central-1.amazonaws.com/uploads.mangoweb.org/shared-prod/visegradfund.org/uploads/2021/08/placeholder-male.jpg"
     },
+     gender: {
+    type: String,
+    enum: ["male", "female", "other"],
+    required: true
+  }
     
 
 },{timestamps:true})
