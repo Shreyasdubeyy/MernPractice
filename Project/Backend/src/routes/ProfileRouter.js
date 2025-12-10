@@ -29,15 +29,21 @@ try {
     //save it into database
      await loggedInUser.save()
     const {password,...userDataWithoutPassword}=loggedInUser.toObject()
-     res.send(`${loggedInUser.firstName} you updated your profile\nUpdated data:${JSON.stringify(userDataWithoutPassword,null,2)}`)
+    res.json({
+    message: `${loggedInUser.firstName}, profile updated successfully`,
+    user: userDataWithoutPassword
+    });
+
+    //  res.send(`${loggedInUser.firstName} you updated your profile\nUpdated data:${JSON.stringify(userDataWithoutPassword,null,2)}`)
     // res.json({
     //     message:`${loggedInUser.firstName} you updated your profile`},
            // userDataWithoutPassword
     // ).send()
 
 } catch (error) {
-    res.send("Error:"+error.message)
-
+  res.status(400).json({
+    message: error.message
+  });
 }
 })
 

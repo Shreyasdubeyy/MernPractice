@@ -49,7 +49,7 @@ catch(error){
 }
 
 const checkEditCredentials=(req)=>{
-    const Allowed_Updates=["firstName","lastName","age","photoUrl","about","skills"]
+    const Allowed_Updates=["firstName","lastName","age","photoUrl","about","skills","gender"]
     if(Object.keys(req.body).length===0)throw new Error("Please pass the fields to edit");
 
     const isAllowed=Object.keys(req.body).every((field)=>{

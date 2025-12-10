@@ -34,13 +34,26 @@ useEffect(()=>{
   fetchUser()
 },[])
 
-  return (
-    <>
-    <Navbar/>
-    <Outlet/>
-    <Footer/>
-    </>
-  )
+ return (
+  // <>
+  // <Navbar/>
+  // <Outlet/>
+  // <Footer/>
+  // </>
+
+  <div className="min-h-screen flex flex-col">
+  <Navbar />
+
+  <main className="flex-grow">
+    <Outlet />
+  </main>
+
+  <Footer />
+</div>
+
+);
+
+
 }
 
 export default Body
