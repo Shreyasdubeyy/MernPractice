@@ -32,7 +32,7 @@ userRouter.get("/connections",jwtAuthCheck,async(req,res)=>{
         const connections=await ConnectionRequest.find({
             $or:[{SenderId:loggedInUser._id},{ReceiverId:loggedInUser._id}],
             status:"accepted"
-        }).populate("SenderId",USER_DATA_ALLOWED).populate("ReceiverId",USER_DATA_ALLOWED)
+        }).populate("SenderId",USER_DATA_ALLOWED+" email").populate("ReceiverId",USER_DATA_ALLOWED+" email")
 
 
         const filteredConnections=connections.map((row)=>{
@@ -42,7 +42,9 @@ userRouter.get("/connections",jwtAuthCheck,async(req,res)=>{
             return row.SenderId
         })
 
-        res.send("Friends:"+JSON.stringify(filteredConnections,null,2))
+        res.status(200).json({
+            connections:filteredConnections
+        })
 
 
     } catch (error) {
