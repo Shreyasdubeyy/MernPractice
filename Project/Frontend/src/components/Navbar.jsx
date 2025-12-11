@@ -58,7 +58,9 @@ const Navbar = () => {
               <li>
                 <Link to="/connections" onClick={closeDropdown}>Connections</Link>
               </li>
-
+              <li>
+                <Link to="/requests" onClick={closeDropdown}>Requests</Link>
+              </li>
               <li>
                 <a
                   onClick={() => {

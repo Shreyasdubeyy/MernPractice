@@ -13,7 +13,7 @@ const loggedInUser=req.user;
 const requests=await ConnectionRequest.find({
     ReceiverId:loggedInUser._id,
     status:"interested"
-}).populate("SenderId",["firstName","lastName"])
+}).populate("SenderId",USER_DATA_ALLOWED)
 
 res.send(requests)
 
