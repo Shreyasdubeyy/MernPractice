@@ -96,7 +96,7 @@ const feedUsers=await User.find({
             }
         }
     ]
-}).select(USER_DATA_ALLOWED).skip(skip).limit(limit)
+}).select("_id "+USER_DATA_ALLOWED).skip(skip).limit(limit)
 
 res.send(feedUsers)
 
