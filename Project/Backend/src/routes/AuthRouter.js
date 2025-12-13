@@ -31,11 +31,16 @@ authRouter.post("/signUp",async(req,res)=>{
         }) 
 
         //save it to collection
-        const success=await user.save()
-        console.log(success)
-        res.send("User created successfully")
+        const userCreated=await user.save()
+
+        //generate token for direct authentication
+         const token=await user.createJwtToken();
+        res.cookie("token",token)
+       return  res.json({
+        user:userCreated,
+        message:"Logged in successful"
         
-    } catch (error) {
+  })  } catch (error) {
         res.status(401).send("Error:"+error.message)
     }
 
